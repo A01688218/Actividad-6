@@ -4,6 +4,7 @@ output:
   flexdashboard::flex_dashboard:
     orientation: columns
     vertical_layout: fill
+    source_code: "https://github.com/A01688218/Actividad-6"
 ---
 
 ```{r setup, include=FALSE}
@@ -800,7 +801,7 @@ ggplot(dfh, aes(y = Age,
 
 ### Correlación y balance
 
-#### **Pearson** 
+#### **Pearson**
 
 ::: box
 Crearemos una matriz de correlación con el método de Pearson sin embargo, esta base de datos tiene un excendete de valores sesgados por lo que también estaremos usando el método de Kendall
@@ -909,7 +910,6 @@ summary(linear_regressor)
 #### Explicación
 
 ::: box
-
 Como podemos ver, el modelo me esta diciendo que todas las variables son explicativas y con un $p-value$ muy bueno. Creemos que esto se debe a todas los valores que eliminamos como los nulos y los `?`.
 
 Los valores residuales no son más que las distancias de los valores observados y el modelo que se genera, estos valores también son conocidos como "errores".
