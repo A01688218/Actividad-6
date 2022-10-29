@@ -1,0 +1,939 @@
+---
+title: "Actividad-6"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(dplyr)
+library(DT)
+library(ggplot2)
+
+library(corrplot)
+library(ggthemes)
+library(tidyverse)
+library(viridis)
+```
+
+# Contexto y Manipulación
+
+## Column1 {data-width="50%"}
+
+### **Primer acercamiento a los datos**
+
+#### **Cargando datos**
+
+::: box
+Cargaremos la data de la siguiente forma:
+
+    df <-read.csv("C:\\Users\\eduar\\OneDrive - Instituto Tecnologico y de Estudios Superiores de Monterrey\\Tec Monterrey Adm TI M\\4. Analisis y minería de datos para la toma de desiciones\\A6\\Actividad-6\\processed.switzerland.data", header = F)
+:::
+
+```{r}
+df <-read.csv("C:\\Users\\eduar\\OneDrive - Instituto Tecnologico y de Estudios Superiores de Monterrey\\Tec Monterrey Adm TI M\\4. Analisis y minería de datos para la toma de desiciones\\A6\\Actividad-6\\processed.switzerland.data", header = F)
+
+df %>% glimpse()
+```
+
+#### **Entendiendo el contexto de los datos**
+
+::: box
+Publication Request:
+
+\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>
+
+This file describes the contents of the heart-disease directory.
+
+This directory contains 4 databases concerning heart disease diagnosis.
+
+All attributes are numeric-valued. The data was collected from the
+
+four following locations:
+
+1.  Cleveland Clinic Foundation (cleveland.data)
+
+2.  Hungarian Institute of Cardiology, Budapest (hungarian.data)
+
+3.  V.A. Medical Center, Long Beach, CA (long-beach-va.data)
+
+4.  University Hospital, Zurich, Switzerland (switzerland.data)
+
+Each database has the same instance format. While the databases have 76
+
+raw attributes, only 14 of them are actually used. Thus I've taken the
+
+liberty of making 2 copies of each database: one with all the attributes
+
+and 1 with the 14 attributes actually used in past experiments.
+
+The authors of the databases have requested:
+
+...that any publications resulting from the use of the data include the
+
+names of the principal investigator responsible for the data collection
+
+at each institution. They would be:
+
+1.  Hungarian Institute of Cardiology. Budapest: Andras Janosi, M.D.
+
+2.  University Hospital, Zurich, Switzerland: William Steinbrunn, M.D.
+
+3.  University Hospital, Basel, Switzerland: Matthias Pfisterer, M.D.
+
+4.  V.A. Medical Center, Long Beach and Cleveland Clinic Foundation:
+
+    Robert Detrano, M.D., Ph.D.
+
+Thanks in advance for abiding by this request.
+
+David Aha
+
+July 22, 1988
+
+\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>\>
+
+1\. Title: Heart Disease Databases
+
+2\. Source Information:
+
+(a) Creators:
+
+\-- 1. Hungarian Institute of Cardiology. Budapest: Andras Janosi, M.D.
+
+\-- 2. University Hospital, Zurich, Switzerland: William Steinbrunn, M.D.
+
+\-- 3. University Hospital, Basel, Switzerland: Matthias Pfisterer, M.D.
+
+\-- 4. V.A. Medical Center, Long Beach and Cleveland Clinic Foundation:
+
+Robert Detrano, M.D., Ph.D.
+
+(b) Donor: David W. Aha (aha\@ics.uci.edu) (714) 856-8779
+
+(c) Date: July, 1988
+
+3\. Past Usage:
+
+1.  Detrano,\~R., Janosi,\~A., Steinbrunn,\~W., Pfisterer,\~M., Schmid,\~J.,
+
+Sandhu,\~S., Guppy,\~K., Lee,\~S., \\& Froelicher,\~V. (1989). {\\it
+
+International application of a new probability algorithm for the
+
+diagnosis of coronary artery disease.} {\\it American Journal of
+
+Cardiology}, {\\it 64},304--310.
+
+\-- International Probability Analysis
+
+\-- Address: Robert Detrano, M.D.
+
+Cardiology 111-C
+
+V.A. Medical Center
+
+5901 E. 7th Street
+
+Long Beach, CA 90028
+
+\-- Results in percent accuracy: (for 0.5 probability threshold)
+
+Data Name: CDF CADENZA
+
+\-- Hungarian 77 74
+
+Long beach 79 77
+
+Swiss 81 81
+
+\-- Approximately a 77% correct classification accuracy with a
+
+logistic-regression-derived discriminant function
+
+2.  David W. Aha & Dennis Kibler
+
+\--
+
+\-- Instance-based prediction of heart-disease presence with the
+
+Cleveland database
+
+\-- NTgrowth: 77.0% accuracy
+
+\-- C4: 74.8% accuracy
+
+3.  John Gennari
+
+\-- Gennari, J.\~H., Langley, P, \\& Fisher, D. (1989). Models of
+
+incremental concept formation. {\\it Artificial Intelligence, 40},
+
+11--61.
+
+\-- Results:
+
+\-- The CLASSIT conceptual clustering system achieved a 78.9% accuracy
+
+on the Cleveland database.
+
+4\. Relevant Information:
+
+This database contains 76 attributes, but all published experiments
+
+refer to using a subset of 14 of them. In particular, the Cleveland
+
+database is the only one that has been used by ML researchers to
+
+this date. The "goal" field refers to the presence of heart disease
+
+in the patient. It is integer valued from 0 (no presence) to 4.
+
+Experiments with the Cleveland database have concentrated on simply
+
+attempting to distinguish presence (values 1,2,3,4) from absence (value
+
+0).
+
+The names and social security numbers of the patients were recently
+
+removed from the database, replaced with dummy values.
+
+One file has been "processed", that one containing the Cleveland
+
+database. All four unprocessed files also exist in this directory.
+
+5\. Number of Instances:
+
+Database: \# of instances:
+
+Cleveland: 303
+
+Hungarian: 294
+
+Switzerland: 123
+
+Long Beach VA: 200
+
+6\. Number of Attributes: 76 (including the predicted attribute)
+
+7\. Attribute Information:
+
+\-- Only 14 used
+
+\-- 1. #3 (age)
+
+\-- 2. #4 (sex)
+
+\-- 3. #9 (cp)
+
+\-- 4. #10 (trestbps)
+
+\-- 5. #12 (chol)
+
+\-- 6. #16 (fbs)
+
+\-- 7. #19 (restecg)
+
+\-- 8. #32 (thalach)
+
+\-- 9. #38 (exang)
+
+\-- 10. #40 (oldpeak)
+
+\-- 11. #41 (slope)
+
+\-- 12. #44 (ca)
+
+\-- 13. #51 (thal)
+
+\-- 14. #58 (num) (the predicted attribute)
+
+\-- Complete attribute documentation:
+
+1 id: patient identification number
+
+2 ccf: social security number (I replaced this with a dummy value of 0)
+
+3 age: age in years
+
+4 sex: sex (1 = male; 0 = female)
+
+5 painloc: chest pain location (1 = substernal; 0 = otherwise)
+
+6 painexer (1 = provoked by exertion; 0 = otherwise)
+
+7 relrest (1 = relieved after rest; 0 = otherwise)
+
+8 pncaden (sum of 5, 6, and 7)
+
+9 cp: chest pain type
+
+\-- Value 1: typical angina
+
+\-- Value 2: atypical angina
+
+\-- Value 3: non-anginal pain
+
+\-- Value 4: asymptomatic
+
+10 trestbps: resting blood pressure (in mm Hg on admission to the
+
+hospital)
+
+11 htn
+
+12 chol: serum cholestoral in mg/dl
+
+13 smoke: I believe this is 1 = yes; 0 = no (is or is not a smoker)
+
+14 cigs (cigarettes per day)
+
+15 years (number of years as a smoker)
+
+16 fbs: (fasting blood sugar \> 120 mg/dl) (1 = true; 0 = false)
+
+17 dm (1 = history of diabetes; 0 = no such history)
+
+18 famhist: family history of coronary artery disease (1 = yes; 0 = no)
+
+19 restecg: resting electrocardiographic results
+
+\-- Value 0: normal
+
+\-- Value 1: having ST-T wave abnormality (T wave inversions and/or ST
+
+elevation or depression of \> 0.05 mV)
+
+\-- Value 2: showing probable or definite left ventricular hypertrophy
+
+by Estes' criteria
+
+20 ekgmo (month of exercise ECG reading)
+
+21 ekgday(day of exercise ECG reading)
+
+22 ekgyr (year of exercise ECG reading)
+
+23 dig (digitalis used furing exercise ECG: 1 = yes; 0 = no)
+
+24 prop (Beta blocker used during exercise ECG: 1 = yes; 0 = no)
+
+25 nitr (nitrates used during exercise ECG: 1 = yes; 0 = no)
+
+26 pro (calcium channel blocker used during exercise ECG: 1 = yes; 0 = no)
+
+27 diuretic (diuretic used used during exercise ECG: 1 = yes; 0 = no)
+
+28 proto: exercise protocol
+
+1 = Bruce
+
+2 = Kottus
+
+3 = McHenry
+
+4 = fast Balke
+
+5 = Balke
+
+6 = Noughton
+
+7 = bike 150 kpa min/min (Not sure if "kpa min/min" is what was
+
+written!)
+
+8 = bike 125 kpa min/min
+
+9 = bike 100 kpa min/min
+
+10 = bike 75 kpa min/min
+
+11 = bike 50 kpa min/min
+
+12 = arm ergometer
+
+29 thaldur: duration of exercise test in minutes
+
+30 thaltime: time when ST measure depression was noted
+
+31 met: mets achieved
+
+32 thalach: maximum heart rate achieved
+
+33 thalrest: resting heart rate
+
+34 tpeakbps: peak exercise blood pressure (first of 2 parts)
+
+35 tpeakbpd: peak exercise blood pressure (second of 2 parts)
+
+36 dummy
+
+37 trestbpd: resting blood pressure
+
+38 exang: exercise induced angina (1 = yes; 0 = no)
+
+39 xhypo: (1 = yes; 0 = no)
+
+40 oldpeak = ST depression induced by exercise relative to rest
+
+41 slope: the slope of the peak exercise ST segment
+
+\-- Value 1: upsloping
+
+\-- Value 2: flat
+
+\-- Value 3: downsloping
+
+42 rldv5: height at rest
+
+43 rldv5e: height at peak exercise
+
+44 ca: number of major vessels (0-3) colored by flourosopy
+
+45 restckm: irrelevant
+
+46 exerckm: irrelevant
+
+47 restef: rest raidonuclid (sp?) ejection fraction
+
+48 restwm: rest wall (sp?) motion abnormality
+
+0 = none
+
+1 = mild or moderate
+
+2 = moderate or severe
+
+3 = akinesis or dyskmem (sp?)
+
+49 exeref: exercise radinalid (sp?) ejection fraction
+
+50 exerwm: exercise wall (sp?) motion
+
+51 thal: 3 = normal; 6 = fixed defect; 7 = reversable defect
+
+52 thalsev: not used
+
+53 thalpul: not used
+
+54 earlobe: not used
+
+55 cmo: month of cardiac cath (sp?) (perhaps "call")
+
+56 cday: day of cardiac cath (sp?)
+
+57 cyr: year of cardiac cath (sp?)
+
+58 num: diagnosis of heart disease (angiographic disease status)
+
+\-- Value 0: \< 50% diameter narrowing
+
+\-- Value 1: \> 50% diameter narrowing
+
+(in any major vessel: attributes 59 through 68 are vessels)
+
+59 lmt
+
+60 ladprox
+
+61 laddist
+
+62 diag
+
+63 cxmain
+
+64 ramus
+
+65 om1
+
+66 om2
+
+67 rcaprox
+
+68 rcadist
+
+69 lvx1: not used
+
+70 lvx2: not used
+
+71 lvx3: not used
+
+72 lvx4: not used
+
+73 lvf: not used
+
+74 cathef: not used
+
+75 junk: not used
+
+76 name: last name of patient
+
+    (I replaced this with the dummy string "name")
+
+9\. Missing Attribute Values: Several. Distinguished with value -9.0.
+
+10\. Class Distribution:
+
+Database: 0 1 2 3 4 Total
+
+Cleveland: 164 55 36 35 13 303
+
+Hungarian: 188 37 26 28 15 294
+
+Switzerland: 8 48 32 30 5 123
+
+Long Beach VA: 51 56 41 42 10 200
+:::
+
+::: box
+Como se puede ver el nombre de las columnas es por lo tanto:
+
+V1: "Age"
+
+V2: "Sex"
+
+V3: "Chest_Pain_Type"
+
+V4: "Resting_Blood_Pressure"
+
+V5: "Serum_Cholesterol"
+
+V6: "Fasting_Blood_Sugar"
+
+V7: "Resting_ECG"
+
+V8: "Max_Heart_Rate_Achieved"
+
+V9: "Exercise_Induced_Angina"
+
+V10: "ST_Depression_Exercise"
+
+V11: "Peak_Exercise_ST_Segment"
+
+V12: "Num_Major_Vessels_Flouro"
+
+V13: "Thalassemia"
+
+V14: "Diagnosis_Heart_Disease"
+
+Suponemos que existen más columnas dentro de esta base de datos que no fueron proporcionadas por ejemplo:
+
+-   ccf: social security number
+
+-   relrest (1 = relieved after rest; 0 = otherwise)
+
+-   pncaden (sum of 5, 6, and 7)
+
+-   Otras más
+:::
+
+#### **Comprendiendo las columnas**
+
+::: box
+1.  **Age**: Edad del sujeto
+2.  **Sex**: Género del sujeto
+    -   0 = femenino
+    -   1 = masculino
+3.  **Chest-pain type**: Tipo de dolor torácico experimentado por el individuo:
+    -   1 = angina típica
+    -   2 = angina atípica
+    -   3 = dolor no anginoso
+    -   4 = angina asintomática
+4.  **Resting Blood Pressure**: presión arterial en reposo en mm Hg (admisión al hospital)
+5.  **Serum Cholesterol**: Colesterol sérico en mg/dl
+6.  **Fasting Blood Sugar**: nivel de azúcar en sangre en ayunas (120 mg/dl):
+    -   0 = azúcar en sangre en ayunas \<= 120 mg/dl
+    -   1 = azúcar en sangre en ayunas \> 120 mg/dl
+7.  **Resting ECG**: resultados electrocardiográficos en reposo
+    -   0 = normales
+    -   1 = anormalidad de la onda ST-T (Inversiones de la onda T y/o elevación o depresión del ST \> 0,05 mV)
+    -   2 = que muestra hipertrofia ventricular izquierdo probable o definitiva según los criterios de Este's
+8.  **Maximum Heart Rate Achieved**: frecuencia cardíaca máxima del sujeto
+9.  **Exercise Induced Angina**:
+    -   0 = no
+    -   1 = sí
+10. **ST Depression Induced by Exercise Relative to Rest**: depresión del ST inducida por el ejercicio en relación con el reposo
+11. **Peak Exercise ST Segmen**t: la pendiente del segmento ST de ejercicio máximo
+    -   1 = pendiente ascendente
+    -   2 = plano
+    -   3 = pendiente descendente
+12. **Number of Major Vessels (0-3) Visible on Flouroscopy**: número de vasos visibles bajo fluoroscopia (0-3)
+13. **Thal**: Sabra dios :(
+    -   3 = normales
+
+    -   6 = defecto fijo
+
+    -   7 = defecto reversible
+14. **Diagnosis of Heart Disease**: diagnóstico de enfermedad cardíaca (estado de enfermedad angiográfico):
+    -   Valor 0: \< 50% estrechamiento del diámetro
+
+    -   Valor 1: \> 50% estrechamiento del diámetro
+
+    -   (en cualquier buque principal: los atributos 59 a 68 son buques)
+
+    -   ¿Se entiende que si es 0 no hay enfermedad?
+
+El atributo a predecir es **Diagnosis of Heart Disease**
+:::
+
+#### Modificando el nombre de las columnas
+
+```{r}
+names <- c("Age",
+           "Sex",
+           "Chest_Pain_Type",
+           "Resting_Blood_Pressure",
+           "Serum_Cholesterol",
+           "Fasting_Blood_Sugar",
+           "Resting_ECG",
+           "Max_Heart_Rate_Achieved",
+           "Exercise_Induced_Angina",
+           "ST_Depression_Exercise",
+           "Peak_Exercise_ST_Segment",
+           "Num_Major_Vessels_Flouro",
+           "Thal",
+           "Diagnosis_Heart_Disease")
+colnames(df) <- names
+
+
+```
+
+```{r}
+
+r1 <- head(df,10)
+knitr::kable(r1,align = "lccrr", col.names=gsub("[_]", " ", names(r1)))
+```
+
+## Column2 {data-width="50%"}
+
+### **Limpieza**
+
+::: box
+Para empezar tenemos un monton de datos con signos de interrogación, veamos cuanto N/A tenemos con la función
+
+`sum(is.na(df))`
+:::
+
+```{r}
+
+sum(is.na(df))
+```
+
+::: box
+Al menos no tenemos NA.
+
+Sin embargo, tenemos un chorro de valores "?", por ejemplo:
+
+-   \-- 5. #12 chol: serum cholestoral in mg/dl
+    -   Esta varible no contiene mas que ceros, a pesar de que debe de estar medida en mg/dl
+-   \-- 6. #16 fbs: (fasting blood sugar \> 120 mg/dl) (1 = true; 0 = false)
+    -   Esta varible contienen en su gran mayoria signos de interrogación
+-   \-- 12. #44 (ca): ca: number of major vessels (0-3) colored by flourosopy
+    -   Salvo por 5 observaciones, todas son signos de interrogación.
+
+Por lo que, apesar que creemos que son importantes, tendremos que eliminar estas columnas ya que no nos aportan valor, y rellenar podría a llevar a conjeturas erroneas.
+
+También queremos saber el número de observaciones en la columna de la variable objetivo para comprender si el conjunto de datos está relativamente equilibrado.
+:::
+
+```{r}
+r2 <- count(df, Diagnosis_Heart_Disease)
+knitr::kable(r2,align = "lccrr", col.names=gsub("[_]", " ", names(r2)))
+```
+
+::: box
+Los datos estan claramente desvalanceados, existen muchos más enfermos
+:::
+
+### Transformación
+
+::: box
+Según el analisis anterior que realizamos de la columna objetivo indicamos que:
+
+-   **Diagnosis of Heart Disease**: diagnóstico de enfermedad cardíaca (estado de enfermedad angiográfico):
+    -   Valor 0: \< 50% estrechamiento del diámetro
+
+    -   Valor 1: \> 50% estrechamiento del diámetro
+
+    -   (en cualquier buque principal: los atributos 59 a 68 son buques)
+
+    -   ¿Se entiende que si es 0 no hay enfermedad?
+
+Mantendremos esta relación y todos los valores que sean por arriba de 0 serán 1 por lo tanto:
+
+-   **Diagnosis of Heart Disease**: diagnóstico de enfermedad cardíaca (estado de enfermedad angiográfico):
+    -   Valor 0: No hay enfermedad
+
+    -   Valor 1: Hay enfermedad
+
+Además mutaremos las variables para trabajarlas como factores y eliminaremos las columnas que no aportan (5,6,12), así como combertiremos en NA aquellas observaciones con `?` para despues tirarlas
+:::
+
+```{r}
+col <- c(2,3,6,7,9,11,14)
+datos <- df
+datos[col] <- lapply(datos[col], factor)
+
+datos <- datos %>%
+  mutate(Diagnosis_Heart_Disease = fct_recode(Diagnosis_Heart_Disease,'0'='0','1'='1','1'='2','1'='3','1'='4'))
+
+dfh <- select(datos, -Serum_Cholesterol, -Fasting_Blood_Sugar, -Num_Major_Vessels_Flouro)
+datos <- select(datos, -Serum_Cholesterol, -Fasting_Blood_Sugar, -Num_Major_Vessels_Flouro)
+
+idx <- dfh == "?"
+is.na(dfh) <- idx
+
+dfc <- dfh %>%
+  drop_na()
+
+col <- c(1,4,6,8,10)
+dfc[col] <- lapply(dfc[col],function(x) as.numeric(as.character(x)))
+
+
+knitr::kable(dfc,align = "lccrr", col.names=gsub("[_]", " ", names(dfc)))
+```
+
+::: box
+Como se puede ver quedarón solo 55 observaciones y se eliminaron columnas que creemos pudieron haber sido interesantes analisar, sin embargo, como se consulto con el Dr. Diógenes Alexander Garrido, no se consultaran estos atributos
+
+Recordando un poco de estadistica, según el teorema del limite central tenemos suficientes datos para poder aproximar a la población, sin embargo, un analisis cercano a big data o minería de datos queda corto.
+
+Esta parte fue un poco dificil de llevar a cabo y sentimos que realmente estamos perdiendo mucha información.
+:::
+
+# Análisis
+
+## Column1 {data-width="50%"}
+
+::: box
+Evaluaremos algunas relaciones con la variable objetivo. Cada grafico estara descrito en la parte inferior.
+:::
+
+### **boxplot**
+
+#### **Diagnostivos vs Edad (dfc)**
+
+::: box
+Como se puede apreciar, debido a que se dejaron ir todas aquellas observacioens con '`?'` nuestros datos se redujeron demasiado y la población no enferma (0) se redujeron considerablemente hasta el punto en que solo tenemos una sola observación. :'(
+
+Pensabamos realizar más analisis con esta data "limpia" sin embargo, nos arriesgaremos a usar la data con nulos `dfh`
+:::
+
+```{r}
+ggplot(dfc, aes(y = Age, 
+                x = Diagnosis_Heart_Disease, 
+                col = Diagnosis_Heart_Disease)) +
+  geom_boxplot() + 
+  geom_jitter(shape=16, position=position_jitter(0.2))+
+  theme_gdocs()+
+  labs(x="Diagnostico de enfermedad cardiaca", y="Edad", colour="Enfermo 1, Sano 0")
+```
+
+#### **Diagnostivos vs Edad (dfh)**
+
+::: box
+No es sorpresa que nuestros datos sigan desvalanceados, desde el primer conteo de valores identificamos que las observaciones con 0 eran minoria (solo 10). Seguiremos describiendo.
+:::
+
+```{r}
+ggplot(dfh, aes(y = Age, 
+                x = Diagnosis_Heart_Disease, 
+                col = Diagnosis_Heart_Disease)) +
+  geom_boxplot() + 
+  geom_jitter(shape=16, position=position_jitter(0.2))+
+  theme_gdocs()+
+  labs(x="Diagnostico de enfermedad cardiaca", y="Edad", colour="Enfermo 1, Sano 0")
+```
+
+#### **Diagnostivos vs Edad (por sexo)**
+
+::: box
+Como podemos observar, no existen mujeres sanas, por otro lado las mujeres que más enferman tienen a tener mayor edad que los hombres, además de que aparentemente existe un sesgo ya que la mediana se acerca más al tercer cuartil.
+:::
+
+```{r}
+ggplot(dfh, aes(y = Age, 
+                x = Diagnosis_Heart_Disease, 
+                col = Sex)) +
+  geom_boxplot() + 
+  theme_gdocs()+
+  labs(x="Diagnostico de enfermedad cardiaca", y="Edad",colour = "Sexo")
+```
+
+#### **Diagnostivos vs Edad (tipos de dolor)**
+
+::: box
+Podemos ver que los que llegaron al hospital experimentaban dolores como "dolor no anginoso", "angina asintomática" y muy pocos casos de "angina atípica".
+
+Por otro lado, los que si tenian enfermedad cardiaca experimentaron los 4 tipos de dolor pero en su mayoría el tipo numero 2, es decir "angina atípica"
+:::
+
+```{r}
+ggplot(dfh, aes(y = Age, 
+                x = Diagnosis_Heart_Disease, 
+                col = Chest_Pain_Type)) +
+  geom_boxplot() + 
+  theme_gdocs()+
+  labs(x="Diagnostico de enfermedad cardiaca", y="Edad",colour = "Tipo de dolor (pecho)")
+
+```
+
+#### **Diagnostivos vs Edad (pendiente ST ejercicio Max)**
+
+::: box
+Esta no la pudimos interpretar pero un cardiologo podría obtener información que le pueda ser de utilidad.
+:::
+
+```{r}
+ggplot(dfh, aes(y = Age, 
+                x = Diagnosis_Heart_Disease, 
+                col = Peak_Exercise_ST_Segment)) +
+  geom_boxplot() + 
+  theme_gdocs()+
+  labs(x="Diagnostico de enfermedad cardiaca", y="Edad",colour = "pendiente ST de ejercicio máx")
+```
+
+## Column2 {data-width="50%"}
+
+### Correlación y balance
+
+#### **Pearson** 
+
+::: box
+Crearemos una matriz de correlación con el método de Pearson sin embargo, esta base de datos tiene un excendete de valores sesgados por lo que también estaremos usando el método de Kendall
+:::
+
+```{r}
+
+cor(dfc[, unlist(lapply(dfc, is.numeric))], method = c("pearson"))
+```
+
+```{r}
+m <- cor(dfc[, unlist(lapply(dfc, is.numeric))],use = "pairwise", method = c("pearson"))
+
+corrplot(m, method = "number",
+         tl.pos = "d",  
+         tl.cex = 0.5, 
+         tl.col = 'black',
+         order = "hclust", 
+         diag = TRUE,
+         title = "Correlación metodo pearson"
+         , mar=c(1,1,1,1))
+```
+
+#### **Kendall**
+
+```{r}
+cor(dfc[, unlist(lapply(dfc, is.numeric))], method = c("kendall"))
+```
+
+```{r}
+m1 <- cor(dfc[, unlist(lapply(dfc, is.numeric))],use = "pairwise", method = c("kendall"))
+
+corrplot(m1, method = "number",
+         tl.pos = "d",  
+         tl.cex = 0.5, 
+         tl.col = 'black',
+         order = "hclust", 
+         diag = TRUE,
+         title = "Correlación metodo pearson"
+         , mar=c(1,1,1,1))
+```
+
+::: box
+Existen algunas diferencias insignificativas, lo importante de este análisis es observar que ninguna de las variables pareciese estar correlacionada significativamente. Por lo que podemos estar tranquilos y no eliminar más columnas
+:::
+
+#### **Balance**
+
+::: box
+Ya sabemos, a ojo de buen cubero, que nuestros datos no estan balanceados pero haremos el análisis de cada variable.
+:::
+
+#### **Diagnostico y sexo**
+
+```{r}
+xtabs(~ Diagnosis_Heart_Disease + Sex, dfc)
+```
+
+#### Diagnostico y dolor de pecho
+
+```{r}
+xtabs(~ Diagnosis_Heart_Disease + Chest_Pain_Type, dfc)
+```
+
+#### Diagnostico y electro en reposo
+
+```{r}
+xtabs(~ Diagnosis_Heart_Disease + Resting_ECG, dfc)
+```
+
+#### Diagnostico y dolor de pecho
+
+```{r}
+xtabs(~ Diagnosis_Heart_Disease + Exercise_Induced_Angina, dfc)
+```
+
+#### Diagnostico y Peak Exercise ST Segment
+
+```{r}
+xtabs(~ Diagnosis_Heart_Disease + Peak_Exercise_ST_Segment, dfc)
+```
+
+::: box
+La mayoría de nuestras columnas estan desproporcionadas. T_T
+:::
+
+# Modelo
+
+## Column 1 {data-width="100%"}
+
+### Modelo
+
+#### Inicio
+
+::: box
+Se penso en dividir nuestros datos en training y testin, pero con 55 observaciones no vale la pena, por lo que aplicaremos el modelo y lo analizaremos.
+:::
+
+```{r}
+linear_regressor=glm(formula = Diagnosis_Heart_Disease~.,
+                     family=quasibinomial,
+                     data=dfc)
+summary(linear_regressor)
+```
+
+#### Explicación
+
+::: box
+
+Como podemos ver, el modelo me esta diciendo que todas las variables son explicativas y con un $p-value$ muy bueno. Creemos que esto se debe a todas los valores que eliminamos como los nulos y los `?`.
+
+Los valores residuales no son más que las distancias de los valores observados y el modelo que se genera, estos valores también son conocidos como "errores".
+
+La **desviación residual** nos dice qué tan bien se puede predecir la variable de respuesta mediante un modelo con $p$ variables predictoras. Cuanto menor sea el valor, mejor podrá el modelo predecir el valor de la variable de respuesta.
+
+Para determinar si un modelo es "útil", podemos calcular la estadística Chi-Square como:
+
+$$\chi^2=Null deviance – Residual deviance$$ No haremos la matematica ya que creemos que al tener en su mayoría problemas cardiacos, nuestra data no esta bien balanceada.
+:::
+
+#### Graficos
+
+```{r}
+ plot(linear_regressor)
+```
+
+::: box
+1.  Residuasl vs Fitted
+    -   En este gráfico teemos a $\hat{y}$ los valores `fitted` en el eje de las $x$, and $y-\hat{y}$ los residuales en el eje de las $y$. Como se puede ver los residuos se concentran en su mayoría en la línea 0. Esto sugiere que la suposición de que la relación es lineal es razonable.
+2.  Normal Q-Q
+    -   Observese que los puntos caen a lo largo de una línea en el medio del gráfico, pero se curvan en el extremo derecho. Los gráficos Q-Q normales que exhiben este comportamiento generalmente significan que sus datos tienen valores más extremos de lo que se esperaría si realmente vinieran de una distribución Normal.
+3.  Scale-Location
+    -   También se llama diagrama de ubicación extendida. Este gráfico muestra si los residuos se distribuyen por igual a lo largo de los rangos de los predictores. Podemos observar que no tienen igualdad de varianza, es algo que habíamos detectado desde el principio, es decir, no tienen homocedasticidad, si lo tuvierán veriamos una línea horizontal con puntos de distribución iguales (al azar)
+4.  Residual vs Leverage
+    -   Los gráficos de residuos vs leverage ayudan a identificar puntos de datos influyentes en el modelo. los valores atípicos pueden ser influyentes, aunque no necesariamente tienen que serlo y algunos puntos dentro de un rango normal en su modelo podrían ser muy influyentes. En este caso vemos que en su mayoría son valores atipicos y como estan fuera de las lineas de Cook podemos decir que en su mayoría son influyentes.
+:::
